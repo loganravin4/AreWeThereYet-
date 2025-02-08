@@ -1,7 +1,9 @@
 import os
 import random
 import requests
+from flask import jsonify
 from dotenv import load_dotenv
+from requests.auth import HTTPBasicAuth 
 
 # load environment variables
 dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
@@ -18,7 +20,8 @@ class SpotifyClient:
         response = requests.post(
             url, 
             data={"grant_type": "client_credentials"}, 
-            headers={"Authorization": f"Basic {requests.auth._basic_auth_str(self.client_id, self.client_secret)}"}
+            auth=HTTPBasicAuth(self.client_id, self.client_secret)
+            #headers={"Authorization": f"Basic {requests.auth._basic_auth_str(self.client_id, self.client_secret)}"}
         )
         return response.json().get("access_token")
 

@@ -8,6 +8,7 @@ CORS(app)
 @app.route('/api/test', methods=['GET'])
 def test_api():
     return jsonify({'message': 'Are we live??'})
+#app.register_blueprint(referrers,    url_prefix='/referrers')
 
 @app.route('/api/random-song', methods=['GET'])
 def random_song():

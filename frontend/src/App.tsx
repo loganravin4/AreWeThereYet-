@@ -10,10 +10,35 @@ const App: React.FC = () => {
       .catch(error => console.error("Error fetching data:", error));
   }, []);
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    // Prevent the browser from reloading the page
+    e.preventDefault();
+
+    // Read the form data
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    // You can pass formData as a fetch body directly:
+    fetch('/some-api', { method: form.method, body: formData });
+
+    // Or you can work with it as a plain object:
+    const formJson = Object.fromEntries(formData.entries());
+    console.log(formJson);
+  }
+
   return (
     <div>
-      <h1>React + Flask App</h1>
-      <p>{message}</p>
+      <form method="post" onSubmit={handleSubmit}>
+        <h1>Are we there yet?</h1>
+        <h2>Guess the song! </h2>
+        <label>
+          Text input: <input name="myInput" />
+        </label>
+
+        <button type="submit">Guess!</button>
+
+        <p>{message}</p>
+      </form>
     </div>
   );
 };

@@ -1,11 +1,12 @@
 from flask import Blueprint, jsonify
-from services.spotify_client import SpotifyClient
+from get_song import SpotifyClient
 
 song_blueprint = Blueprint('songs', __name__)
 
 @song_blueprint.route('/test', methods=['GET'])
 def test_api():
     return jsonify({'message': 'Are we live??'})
+
 
 @song_blueprint.route('/random-song', methods=['GET'])
 def random_song():
