@@ -1,30 +1,52 @@
+import { Provider } from "@/components/ui/provider";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const App: React.FC = () => {
   const [message, setMessage] = useState("");
+  const [actualSong, setActualSong] = useState<string | null>(null);
+  const [guessResult, setGuessResult] = useState<string | null>(null);
 
   useEffect(() => {
     axios.get("http://127.0.0.1:5000/api/random-song")
-      .then(response => setMessage(response.data.message))
-      .catch(error => console.error("Error fetching data:", error));
+      .then(response => {
+        setActualSong(response.data.name);
+        console.log(`Correct song: ${response.data.name}`);
+      })
+      .catch(error => console.error("Error fetching song:", error));
   }, []);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent the browser from reloading the page
     e.preventDefault();
 
     // Read the form data
     const form = e.currentTarget;
     const formData = new FormData(form);
+    const userGuess = formData.get("userInput") as string;
 
-    // You can pass formData as a fetch body directly:
-    fetch('/some-api', { method: form.method, body: formData });
+    if (!actualSong) {
+      console.error("No actual song fetched yet.");
+      return;
+    }
 
-    // Or you can work with it as a plain object:
-    const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson);
-  }
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/api/validate-song", {
+        user_input: userGuess,
+        correct_song: actualSong
+      });
+
+      // Display match result
+      if (response.data.match) {
+        setGuessResult("Correct! You guessed the song!");
+      } else {
+        setGuessResult("Incorrect! Try again.");
+      }
+
+    } catch (error) {
+      console.error("Error validating song:", error);
+    }
+  };
 
   return (
     <div>
@@ -32,12 +54,12 @@ const App: React.FC = () => {
         <h1>Are we there yet?</h1>
         <h2>Guess the song! </h2>
         <label>
-          Text input: <input name="myInput" />
+          Text input: <input name="userInput" />
         </label>
-
+        
         <button type="submit">Guess!</button>
 
-        <p>{message}</p>
+        {guessResult && <p>{guessResult}</p>}
       </form>
     </div>
   );
