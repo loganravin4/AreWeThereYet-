@@ -3,6 +3,29 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+} 
+
+h1, h2, h3, input {
+  text-align: center;
+}
+
+#header {
+  vertical-align: text-top;
+  margin: 10px;
+}
+
+input {
+  background-color: white !important; 
+  color: black !important; 
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  border-radius: 5px;
+}
+
+button {
+  background-color: black !important; 
+  color: white !important; 
+  padding: 1.0em;
 }
 
 .logo {
@@ -39,4 +62,53 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.song-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.album-cover {
+  width: 300px;
+  height: 300px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.song-card h2 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.5rem;
+}
+
+.song-card p {
+  margin: 0.5rem 0;
+  color: #888;
+}
+
+.song-card button {
+  margin: 1rem;
+  min-width: 120px;
+}
+
+.song-card a {
+  display: block;
+  margin-top: 1rem;
+  color: #1DB954;
+  text-decoration: none;
+}
+
+.song-card a:hover {
+  text-decoration: underline;
 }

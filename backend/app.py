@@ -28,10 +28,12 @@
 from flask import Flask, Blueprint, jsonify
 from flask_cors import CORS
 from get_song import get_random_song
-#from song_routes import song_blueprint
+from input_song import check_song_match
+from flask import request
 
 app = Flask(__name__)
 get_random_song_bp = Blueprint('get_random_song', __name__)
+song_blueprint = Blueprint('songs', __name__)
 
 # Enable CORS for all routes
 CORS(app)
@@ -44,6 +46,26 @@ def random_song():
     song_info = get_random_song()
     return jsonify(song_info)
 
+@song_blueprint.route('/api/validate-song', methods=['POST'])
+def validate_song():
+    """
+    Validate the song that the user has guessed
+    IM LAYING OUT FOUNDATION, WE NEED TO CHANGE VARIABLE NAMES AND STUFF BASED ON THE NAMES OF FIELDS IN FRONTEND
+    """
+    try:
+        data = request.get_json()
+        if "user_input" not in data or "correct_song" not in data:
+            return jsonify({'error': 'Invalid request'}), 400
+        
+        user_input = data['user_input']
+        correct_song = data['correct_song']
+
+        is_match = check_song_match(user_input, correct_song)
+
+        return jsonify({'is_match': is_match})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 # @play_random_song_bp.route('/api/random-song-play', methods=['GET'])
 # def random_song():
 #    song_info = get_random_song()
@@ -52,7 +74,7 @@ def random_song():
 #    return jsonify(song_info)
 
 app.register_blueprint(get_random_song_bp)
-#app.register_blueprint(song_blueprint)
+app.register_blueprint(song_blueprint)
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)    

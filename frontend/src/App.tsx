@@ -1,17 +1,27 @@
-import { Provider } from "@/components/ui/provider";
 import React, { useEffect, useState } from "react";
+import { HStack } from "@chakra-ui/react";
+import { IoIosMusicalNote } from "react-icons/io";
+import { BsMusicPlayerFill } from "react-icons/bs";
 import axios from "axios";
+import SongPlayer from "./play_song";
+import './App.css';
 
 const App: React.FC = () => {
-  const [message, setMessage] = useState("");
   const [actualSong, setActualSong] = useState<string | null>(null);
   const [guessResult, setGuessResult] = useState<string | null>(null);
-
+  const [songPreviewUrl, setSongPreviewUrl] = useState<string | null>(null); // State to store preview URL
+  const [playSong, setPlaySong] = useState<boolean>(false); 
+  //const [song, setSong] = useState<SongData | null>(null);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   useEffect(() => {
     axios.get("http://127.0.0.1:5000/api/random-song")
       .then(response => {
+        const { name, preview } = response.data;
         setActualSong(response.data.name);
         console.log(`Correct song: ${response.data.name}`);
+        setActualSong(name);
+        setSongPreviewUrl(preview); // Store the preview URL
       })
       .catch(error => console.error("Error fetching song:", error));
   }, []);
@@ -37,9 +47,15 @@ const App: React.FC = () => {
       });
 
       // Display match result
-      if (response.data.match) {
+      console.log("API Response:", response.data);
+      if (response.data.is_match) {
+        console.log(userGuess);
+        console.log(actualSong);
         setGuessResult("Correct! You guessed the song!");
+
       } else {
+        console.log(userGuess);
+        console.log(actualSong);
         setGuessResult("Incorrect! Try again.");
       }
 
@@ -51,16 +67,30 @@ const App: React.FC = () => {
   return (
     <div>
       <form method="post" onSubmit={handleSubmit}>
-        <h1>Are we there yet?</h1>
-        <h2>Guess the song! </h2>
+        <div id = "header">
+        <HStack>
+          <IoIosMusicalNote style={{ fontSize: "3rem" }}/>
+          <h1>Are we there yet?</h1>
+        </HStack>
+        </div>
+        
+        <HStack>
+          <BsMusicPlayerFill style={{ fontSize: "2rem" }}/>
+          <h2>Guess the song! </h2>
+        </HStack>
+
+        
         <label>
           Text input: <input name="userInput" />
         </label>
         
         <button type="submit">Guess!</button>
 
-        {guessResult && <p>{guessResult}</p>}
+        {<p>{guessResult}</p>}
       </form>
+      {songPreviewUrl && (
+        <SongPlayer previewUrl={songPreviewUrl} playSong={playSong} />
+      )}
     </div>
   );
 };
