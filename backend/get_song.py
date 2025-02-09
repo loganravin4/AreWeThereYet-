@@ -8,6 +8,8 @@ load_dotenv(dotenv_path)
 
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 
+
+
 def get_random_song():
     token = ACCESS_TOKEN
     if not token:
